@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ring.NET", "Ring.NET\Ring.NET.csproj", "{970A4593-C19C-4797-8691-AC5633FA9F20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsoleApp", "TestConsoleApp\TestConsoleApp.csproj", "{13F85FBB-288C-4A32-8734-E2F94C9BEA1C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{970A4593-C19C-4797-8691-AC5633FA9F20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{970A4593-C19C-4797-8691-AC5633FA9F20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{970A4593-C19C-4797-8691-AC5633FA9F20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{970A4593-C19C-4797-8691-AC5633FA9F20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13F85FBB-288C-4A32-8734-E2F94C9BEA1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13F85FBB-288C-4A32-8734-E2F94C9BEA1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13F85FBB-288C-4A32-8734-E2F94C9BEA1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13F85FBB-288C-4A32-8734-E2F94C9BEA1C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
