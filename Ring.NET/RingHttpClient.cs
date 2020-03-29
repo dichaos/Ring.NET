@@ -11,22 +11,36 @@ namespace RingIntegration
     public abstract class RingHttpClient
     {
         public abstract string AccessToken { get; }
-        protected async Task<HttpResponseMessage> MakePostRequest(string url, string request, IEnumerable<Tuple<string,string>> headers = null)
+        private const string ApiVersion = "9";
+
+        protected async Task<HttpResponseMessage> MakePostRequest(string url, string request,
+            IEnumerable<Tuple<string, string>> headers = null)
         {
             var httpClient = GetHttpClient(headers);
 
             return await httpClient.PostAsync(url, new StringContent(request, Encoding.UTF8, "application/json"));
         }
 
-        protected async Task<HttpResponseMessage> MakeGetRequest(string url, IEnumerable<Tuple<string, string>> headers = null)
+        protected async Task<HttpResponseMessage> MakeGetRequest(string url,
+            IDictionary<string, string> data = null)
         {
-            var httpClient = GetHttpClient(headers);
-            var result =  await httpClient.GetAsync(url);
+            if(data == null)
+                data = new Dictionary<string, string>();
+            
+            data.Add("api_version", ApiVersion);
+            data.Add("auth_token", AccessToken);
+            
+            var parameters = await new FormUrlEncodedContent(data).ReadAsStringAsync();
+
+            url = url + "?" + parameters;
+            
+            var httpClient = GetHttpClient();
+            var result = await httpClient.GetAsync(url);
 
             return result;
         }
 
-        private HttpClient GetHttpClient(IEnumerable<Tuple<string,string>> headers)
+        private HttpClient GetHttpClient(IEnumerable<Tuple<string, string>> headers = null)
         {
             var httpHandler = new HttpClientHandler
             {
@@ -37,17 +51,11 @@ namespace RingIntegration
             var httpClient = new HttpClient(httpHandler);
 
             if (headers != null)
-            {
                 foreach (var (item1, item2) in headers)
-                {
                     httpClient.DefaultRequestHeaders.Add(item1, item2);
-                }
-            }
 
             if (!string.IsNullOrEmpty(AccessToken))
-            {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
-            }
 
             return httpClient;
         }

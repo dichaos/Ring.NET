@@ -9,4 +9,8 @@
       <ProjectReference Include="..\Ring.NET\Ring.NET.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SecureStore" Version="1.0.3" />
+    </ItemGroup>
+
 </Project>

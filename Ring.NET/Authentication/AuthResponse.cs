@@ -6,6 +6,7 @@ namespace RingIntegration.Authentication
     {
         [JsonProperty(PropertyName = "access_token")]
         public string AccessToken;
+
         public string Scope;
         public string token_type;
     }

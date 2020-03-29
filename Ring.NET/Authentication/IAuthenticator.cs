@@ -4,8 +4,8 @@ namespace RingIntegration.Authentication
 {
     public interface IAuthenticator
     {
-        Task<bool> Authenticate(string username, string password);
-        Task<bool> TwoFactorAuthentication(string code);
         string AccessToken { get; }
+        Task<bool> Authenticate(bool twofactor = false);
+        Task<bool> TwoFactorAuthentication(string code);
     }
 }
