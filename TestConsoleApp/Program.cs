@@ -1,9 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using DlibDotNet;
+using FaceDetection;
 using Nito.AsyncEx;
 using RingIntegration.Authentication;
 using RingIntegration.Devices;
-using RingIntegration.Devices.Doorbell;
 using RingIntegration.Devices.History;
 
 namespace TestConsoleApp
@@ -21,21 +24,26 @@ namespace TestConsoleApp
 
         private static async Task MainAsync(string[] args)
         {
-            var a = await GetAuthenticator(); 
+            await ExtractFacesFromRingHistory();
+        }
+
+        private static async Task ExtractFacesFromRingHistory()
+        {
+            CreateDirectories();
+            var videosPath = Path.Combine(Directory.GetCurrentDirectory(), "Videos\\");
+            var facesPath = Path.Combine(Directory.GetCurrentDirectory(), "Faces\\");
+            var framesPath = Path.Combine(Directory.GetCurrentDirectory(), "Frames\\");
+
+            var a = await GetAuthenticator();
+            await DownloadFiles(a, videosPath);
             
-            var d = new DeviceManager(a);
-                
-            var deviceList = await d.GetDevices();
-
-            //var b = new Doorbell(a, deviceList.Doorbots[0]);
-            var h = new HistoryManager(a);
-            var history = await h.GetHistory(100);
-
-            foreach (var p in history)
-            {
-                var path = await h.GetRecording(p);
-                Console.WriteLine(path);
-            }
+            Console.WriteLine("Extracting frames from videos...");
+            new VideoControl().ExtractImagesFromVideoFolder(videosPath, framesPath);
+            Console.WriteLine("DONE");
+            
+            Console.WriteLine("Detecting faces in frames...");
+            new FaceDetection.FaceDetection().ExtractFaceImages(framesPath,facesPath);
+            Console.WriteLine("Done");
         }
 
         private static string GetPassword()
@@ -140,6 +148,12 @@ namespace TestConsoleApp
 
                 var deviceList = await d.GetDevices();
 
+                if (deviceList == null && !string.IsNullOrEmpty(token))
+                {
+                    secureStore.SetKey(keyToken, string.Empty);
+                    return await TrySecureStore();
+                }
+                
                 if (deviceList != null)
                     return authenticator;
             }
@@ -149,6 +163,32 @@ namespace TestConsoleApp
             }
 
             return null;
+        }
+
+        private static void CreateDirectories()
+        {
+            var videosPath = Path.Combine(Directory.GetCurrentDirectory(), "Videos");
+            var facesPath = Path.Combine(Directory.GetCurrentDirectory(), "Faces");
+            var framesPath = Path.Combine(Directory.GetCurrentDirectory(), "Frames");
+
+            if (!Directory.Exists(videosPath))
+                Directory.CreateDirectory(videosPath);
+            
+            if (!Directory.Exists(facesPath))
+                Directory.CreateDirectory(framesPath);
+        }
+
+        private static async Task DownloadFiles(Authenticator a, string videosPath)
+        {
+            var h = new HistoryManager(a);
+            var history = await h.GetHistory(100);
+            
+            for (var i =0 ; i< history.Length; i++)
+            {
+                Console.WriteLine($"Downloading {i}/{history.Length}");
+                var byteVideo = await h.GetRecording(history[i]);
+                File.WriteAllBytes(Path.Combine(videosPath, history[i].created_at.ToString("yyyy MM dd -- HH-mm-ss")+".mp4"), byteVideo);
+            }
         }
     }
 }

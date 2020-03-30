@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RingIntegration.Authentication;
 
@@ -19,6 +20,10 @@ namespace RingIntegration.Devices
         public async Task<Models.Devices> GetDevices()
         {
             var httpResponse = await MakeGetRequest(_devicesURL);
+
+            if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
+                return null;
+            
             return JsonConvert.DeserializeObject<Models.Devices>(await httpResponse.Content.ReadAsStringAsync());
         }
     }

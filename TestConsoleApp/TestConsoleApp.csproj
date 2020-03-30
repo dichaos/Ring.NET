@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\FaceDetection\FaceDetection.csproj" />
       <ProjectReference Include="..\Ring.NET\Ring.NET.csproj" />
     </ItemGroup>
 
